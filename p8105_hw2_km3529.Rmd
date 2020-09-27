@@ -1,5 +1,6 @@
 ---
 title: "p8105_hw2_km3529"
+author: Karina Myers
 output: github_document
 ---
 
@@ -10,21 +11,24 @@ library(readxl)
 
 ## Problem 1
 
-Read Mr. Trashwheel dataset 
+```{r Loading Mr. Trashwheel}
+path_to_data = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx"
+```
+
+Read the Mr. Trashwheel dataset
 
 ```{r}
 trashwheel_df = 
-  read_xlsx(
-    "./Trash-Wheel-Collection-Totals-8-6-19.xlsx", 
-      sheet = "Mr. Trash Wheel", 
-      range = cell_cols("A:N") %>% 
-    janitor::clean_names() %>% 
-    drop_na(dumpster) %>% 
-    mutate(
-        sports_balls - round(sports_balls),
-        sports_balls = as.integer(sports_balls)
-    ))
-
+	read_xlsx(
+		path = path_to_data,
+		sheet = "Mr. Trash Wheel",
+		range = cell_cols("A:N")) %>% 
+	janitor::clean_names() %>% 
+	drop_na(dumpster) %>% 
+	mutate(
+		sports_balls = round(sports_balls),
+		sports_balls = as.integer(sports_balls)
+	)
 ```
-readxl assumes front one unless specify 
+
 
