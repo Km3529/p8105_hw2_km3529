@@ -34,7 +34,7 @@ trashwheel_df =
 
 Read precipitation data for 2017 and 2018
 
-```{r}
+```{r 2018 and 2017}
 #setting up 2018
 precip_2018 = 
 	read_excel(
@@ -61,9 +61,7 @@ precip_2017 =
 ```
 
 Combine precipitation datasets and converts month to a character variable 
-
-
-```{r}
+```{r Combine}
 month_df = 
 	tibble(
 		month = 1:12,
@@ -82,7 +80,7 @@ This dataset contains information from the Mr. Trashwheel trash collector in Bal
 
 ## Problem 2
 Load NYC Transit Data 
-```{r}
+```{r NYC Transit}
 transit_df = 
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names() %>% 
@@ -94,30 +92,29 @@ transit_df =
       entry = as.logical(entry))
 ```
 
-This dataset contains information on New York City subway system It includes data on station lines, station coordinates, entrance types, and ADA accessibility. It also includes which trains are on routes 1-11. 
-
-THINGS TO DESCRIBE
+This dataset contains information on the New York City subway system. It includes data on station lines, station coordinates, entrance types, and ADA accessibility. It also provides route name information, as many stops have many lines.  
 
 After importing the data, the names of variables were converted to snake case. Certain variables such as ADA notes were dropped and only the variables of interest were included. Entry was then converted from a character variable to a logical variable. 
 
 There are a total of `r nrow(transit_df)` rows and `r ncol(transit_df)`. 
 
-The data are not tidy. EXPLAIN WHY
+The data are not tidy because there are multiple columns describing route names. A tidyier way to present this would be to have a different row for each route number. 
 
+Find the number of distinct stations 
+```{r Distinct Stations}
+distinct(transit_df, station_name) %>% 
+  count()
+```
 
-There are `r nrow(distinct(transit_df, station_name))` distinct stations. 
-
-
+ADA compliant stations
 ```{r ADA compliant}
 filter(transit_df, ada == TRUE) %>% 
 distinct(line, station_name) %>% 
 count()
-
 ```
 
-
-```{r Proportion of station entrances/exists without vending allow entrance}
-
+Proportion of entrances/exists without vending that allow entrance
+```{r Proportion}
 
 a = filter(transit_df, vending != "YES" 
       & entry == TRUE) %>% 
@@ -129,11 +126,10 @@ b = filter(transit_df, vending != "YES") %>%
 a/b
 
 ```
+The proportion of station entrances and exists without vending that allow entrance is `r a/b`. 
 
-
-
-```{r}
-  
+Reformat so route number and route name are distinct variables
+```{r Reformat}
 transit_tidy =
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
     col_types = "cccnnccccccccccccccccclclcccnncc") %>% 
@@ -149,36 +145,90 @@ transit_tidy =
     names_to = "route_name", 
     values_to = "route_number") %>% 
   drop_na(route_number)
- 
 ```
 
 
-how many stations serve the A train? 
-How many of those are ADA compliant? 
-
-```{r}
-#how many serve the A train
+Serve the A Train
+```{r A train}
+#A Train
 filter(transit_tidy, route_number == "A") %>% 
   distinct(line, station_name) %>% 
   count()
 
-#
+# ADA accessible A Train Stations
 filter(transit_tidy, 
       route_number == "A" &
         ada == TRUE) %>% 
   distinct(line, station_name) %>% 
   count()
-
-
 ```
-
-
 
 ## Problem 3
 
 ```{r}
+month_df = 
+  tibble(
+      month = 1:12, 
+      month_name = month.abb)
+
+pols_df = 
+  read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(mon, into = c("year", "month", "day")) %>% 
+  mutate(month = as.numeric(month))
+
+
+pols_df =
+  left_join(pols_df, month_df, by = "month") 
 
 ```
+
+```{r}
+#create a president variable by taking values of gop and dem and remove prez dem 
+
+mutate(pols_df,
+      president = case_when(
+         prez_dem == 0 ~ "gop",
+         prez_dem == 1 ~ "dem"))
+
+
+```
+
+
+
+Clean the snp data 
+```{r}
+ month_df = 
+  tibble(
+      month = 1:12, 
+      month_name = month.abb)
+
+snp_df = 
+  read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(date, into = c("month", "day", "year")) %>% 
+  mutate(month = as.numeric(month))
+ left_join(snp_df, month_df, by = "month")  %>% 
+  relocate(year, month)
+
+```
+
+
+unemployment data 
+```{r}
+
+ month_df = 
+  tibble(
+      month = 1:12, 
+      month_name = month.abb)
+
+unemployment_df = 
+  read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  janitor::clean_names()
+
+
+```
+
 
 
 
