@@ -116,10 +116,18 @@ count()
 ```
 
 
-```{r Allow entrance}
-filter(transit_df, vending != "YES") %>% 
-  filter(entry == TRUE) %>% 
-count()
+```{r Proportion of station entrances/exists without vending allow entrance}
+
+
+a = filter(transit_df, vending != "YES" 
+      & entry == TRUE) %>% 
+  count()
+
+b = filter(transit_df, vending != "YES") %>% 
+  count()
+
+a/b
+
 ```
 
 
@@ -144,9 +152,26 @@ transit_tidy =
  
 ```
 
-route number, route name 
 
-how many stations serve the A train
+how many stations serve the A train? 
+How many of those are ADA compliant? 
+
+```{r}
+#how many serve the A train
+filter(transit_tidy, route_number == "A") %>% 
+  distinct(line, station_name) %>% 
+  count()
+
+#
+filter(transit_tidy, 
+      route_number == "A" &
+        ada == TRUE) %>% 
+  distinct(line, station_name) %>% 
+  count()
+
+
+```
+
 
 
 ## Problem 3
