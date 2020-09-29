@@ -92,10 +92,6 @@ transit_df =
       entry = replace(entry, entry == "YES", "TRUE"), 
         entry = replace(entry, entry == "NO", "FALSE"), 
       entry = as.logical(entry))
-
-
-
-
 ```
 
 This dataset contains information on New York City subway system It includes data on station lines, station coordinates, entrance types, and ADA accessibility. It also includes which trains are on routes 1-11. 
@@ -128,15 +124,31 @@ count()
 
 
 
-```{r Reformat Data}
+```{r}
+  
 
+mutate_at(transit_df, vars(route1:route11), as.character)
+
+
+transit_tidy =
+  mutate(as.character(route8:route11),
+  transit_df %>% 
+  pivot_longer(
+    route1:route11, 
+    names_to = "route_name", 
+    values_to = "route_number"))
 ```
+
 route number, route name 
 
 how many stations serve the A train
 
 
+## Problem 3
 
+```{r}
+
+```
 
 
 
