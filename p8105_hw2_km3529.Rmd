@@ -86,22 +86,54 @@ Load NYC Transit Data
 transit_df = 
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names() %>% 
-  select(line:ada, -exit_only, -staffing, -staff_hours) %>% 
-  mutate(entry=(if)
+  select(line:entry, vending, ada) %>% 
+  mutate(
+      entry = as.character(entry), 
+      entry = replace(entry, entry == "YES", "TRUE"), 
+        entry = replace(entry, entry == "NO", "FALSE"), 
+      entry = as.logical(entry))
+
+
+
+
 ```
 
-I would recommend using the 'mutate( )' and 'case_when( )' functions to mutate the 'YES'/'NO' records in entry into 'TRUE'/'FALSE', right after you selecting the desired columns in your data pipeline.
+This dataset contains information on New York City subway system It includes data on station lines, station coordinates, entrance types, and ADA accessibility. It also includes which trains are on routes 1-11. 
+
+THINGS TO DESCRIBE
+
+After importing the data, the names of variables were converted to snake case. Certain variables such as ADA notes were dropped and only the variables of interest were included. Entry was then converted from a character variable to a logical variable. 
+
+There are a total of `r nrow(transit_df)` rows and `r ncol(transit_df)`. 
+
+The data are not tidy. EXPLAIN WHY
 
 
-entry (yes, no) to a logical variabe (true/false)
+There are `r nrow(distinct(transit_df, station_name))` distinct stations. 
+
+
+```{r ADA compliant}
+filter(transit_df, ada == TRUE) %>% 
+distinct(line, station_name) %>% 
+count()
+
+```
+
+
+```{r Allow entrance}
+filter(transit_df, vending != "YES") %>% 
+  filter(entry == TRUE) %>% 
+count()
+```
 
 
 
+```{r Reformat Data}
 
+```
+route number, route name 
 
-
-
-
+how many stations serve the A train
 
 
 
