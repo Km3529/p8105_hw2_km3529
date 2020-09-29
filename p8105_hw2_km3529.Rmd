@@ -126,17 +126,22 @@ count()
 
 ```{r}
   
-
-mutate_at(transit_df, vars(route1:route11), as.character)
-
-
 transit_tidy =
-  mutate(as.character(route8:route11),
-  transit_df %>% 
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
+    col_types = "cccnnccccccccccccccccclclcccnncc") %>% 
+  janitor::clean_names() %>% 
+  select(line:entry, vending, ada) %>% 
+  mutate(
+      entry = as.character(entry), 
+      entry = replace(entry, entry == "YES", "TRUE"), 
+        entry = replace(entry, entry == "NO", "FALSE"), 
+      entry = as.logical(entry)) %>% 
   pivot_longer(
     route1:route11, 
     names_to = "route_name", 
-    values_to = "route_number"))
+    values_to = "route_number") %>% 
+  drop_na(route_number)
+ 
 ```
 
 route number, route name 
