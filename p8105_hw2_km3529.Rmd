@@ -244,14 +244,13 @@ unemployment_tidy =
 merge_df = 
   left_join(pols_df, snp_df, by = c("year", "month"))
   
-
+final_df = 
+  left_join(merge_df, unemployment_tidy, by = c("year", "month"))
 ```
-Join the datasets by merging snp into pols
 
-Combine_data = 
-left_join(pols_month_df, snp_df, by = c("year", "month"))
 
-Final_df = 
-left_join(Combine_data, unemployment_tidy_df, by = c("year", "month"))
 
+the SNP looked at betweent he years of 
+
+There are `r nrows(final_df)` rows and `r ncol(final_df)`. 
 
