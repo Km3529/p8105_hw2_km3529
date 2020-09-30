@@ -93,17 +93,11 @@ transit_df =
       entry = as.logical(entry))
 ```
 
-This dataset contains information on the New York City subway system. It includes data on station lines, station coordinates, entrance types, and ADA accessibility. It also provides route name information, as many stops have many lines.  
-
-After importing the data, the names of variables were converted to snake case. Certain variables such as ADA notes were dropped and only the variables of interest were included. Entry was then converted from a character variable to a logical variable. 
-
-There are a total of `r nrow(transit_df)` rows and `r ncol(transit_df)`. 
-
-The data are not tidy because there are multiple columns describing route names. A tidyier way to present this would be to have a different row for each route number. 
+This dataset contains information on the New York City subway system. It includes data on station lines, station coordinates, entrance types, and ADA accessibility. It also provides route name information, as many stops have many lines.  After importing the data, the names of variables were converted to snake case. Certain variables such as ADA notes were dropped and only the variables of interest were included. Entry was then converted from a character variable to a logical variable. While the latitude the NYC subway system range from `r range(transit_df$station_latitude)`, the longtidue covers `r range(transit_df$station_longitude)`. There are a total of `r nrow(transit_df)` rows and `r ncol(transit_df)`. The data are not tidy because there are multiple columns describing route names. A tidyier way to present this would be to have a different row for each route number. 
 
 Find the number of distinct stations 
 ```{r Distinct Stations}
-distinct(transit_df, station_name) %>% 
+distinct(transit_df, line, station_name) %>% 
   count()
 ```
 
