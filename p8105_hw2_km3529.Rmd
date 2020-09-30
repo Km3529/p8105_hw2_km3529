@@ -165,7 +165,8 @@ filter(transit_tidy,
 
 ## Problem 3
 
-```{r}
+Clean the pols-month data
+```{r Pols-month}
 month_df = 
   tibble(
       month = 1:12, 
@@ -194,7 +195,7 @@ pols_df =
 
 
 Clean the snp data 
-```{r}
+```{r Snp}
  month_df = 
   tibble(
       month = 1:12, 
@@ -204,8 +205,14 @@ snp_df =
   read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
   janitor::clean_names() %>% 
   separate(date, into = c("month", "day", "year")) %>% 
-  mutate(month = as.numeric(month))
+  mutate(month = as.numeric(month)) %>% 
+  mutate(year = as.numeric(year)) %>% 
+  mutate(day = as.numeric(day))
+
+snp_df = 
  left_join(snp_df, month_df, by = "month")  %>% 
+  select(-month) %>% 
+  rename(month = month_name) %>% 
   relocate(year, month)
 
 ```
@@ -213,7 +220,6 @@ snp_df =
 
 unemployment data 
 ```{r}
-
  month_df = 
   tibble(
       month = 1:12, 
@@ -229,12 +235,23 @@ unemployment_tidy =
     jan:dec,
     names_to = "month", 
     values_to = "unemp") %>% 
-  rename(Month = month) %>% 
-  mutate(Month = str_to_title(Month))
+  select(-month) %>% 
+  mutate(month = str_to_title(month))
 
 ```
 
 ```{r merge}
+merge_df = 
+  left_join(pols_df, snp_df, by = c("year", "month"))
+  
 
 ```
+Join the datasets by merging snp into pols
+
+Combine_data = 
+left_join(pols_month_df, snp_df, by = c("year", "month"))
+
+Final_df = 
+left_join(Combine_data, unemployment_tidy_df, by = c("year", "month"))
+
 
